@@ -1,109 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Radio Song Watcher</title>
-
 <style>
-
 body{
-font-family:Arial;
-background:#111;
-color:white;
-text-align:center;
-padding:40px;
+  font-family: Arial;
+  background: #111;
+  color: #fff;
+  text-align: center;
+  padding: 40px;
 }
-
-h1{
-color:#ff3c3c;
-}
-
-input{
-padding:12px;
-font-size:18px;
-width:250px;
-}
-
-button{
-padding:12px 20px;
-font-size:18px;
-background:#ff3c3c;
-border:none;
-color:white;
-cursor:pointer;
-margin-top:10px;
-}
-
-#status{
-margin-top:30px;
-font-size:20px;
-}
-
-.alert{
-color:#00ff7f;
-font-size:28px;
-margin-top:30px;
-}
-
+h1{ color: #ff3c3c; }
+input{ padding: 12px; font-size: 18px; width: 250px; margin:5px;}
+button{ padding: 12px 20px; font-size: 18px; background: #ff3c3c; border:none; color:white; cursor:pointer; margin-top:10px; }
+#status{ margin-top:20px; font-size:18px; }
+#alert{ color:#00ff7f; font-size:28px; margin-top:30px; font-weight:bold; }
+#fullscreenAlert{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#ff0000; color:white; font-size:48px; display:flex; justify-content:center; align-items:center; z-index:999; }
 </style>
 </head>
-
 <body>
 
 <h1>🎧 Radio Song Watcher</h1>
 
-<p>Enter the song you want to watch for:</p>
-
-<input id="songInput" placeholder="e.g. Spiders">
-
+<p>Enter the artist and song to watch for:</p>
+<input id="artistInput" placeholder="Artist">
 <br>
-
-<button onclick="setSong()">Start Watching</button>
+<input id="songInput" placeholder="Song">
+<br>
+<button onclick="startWatching()">Start Watching</button>
 
 <div id="status">Waiting...</div>
-
 <div id="alert"></div>
 
+<div id="fullscreenAlert">🚨 SONG DETECTED — CALL NOW! 🚨</div>
+
 <script>
+let watchArtist = "";
+let watchSong = "";
+let watching = false;
 
-let watchSong="";
+// Example: replace this with live fetch from The Rock if possible
+let currentSong = ""; // this will store live "What's Playing" text
 
-function setSong(){
+function startWatching(){
+  watchArtist = document.getElementById("artistInput").value.toLowerCase().trim();
+  watchSong = document.getElementById("songInput").value.toLowerCase().trim();
+  if(watchArtist && watchSong){
+    watching = true;
+    document.getElementById("status").innerText = `Watching for: ${watchArtist} - ${watchSong}`;
+  } else {
+    alert("Please enter both artist and song.");
+  }
+}
 
-watchSong=document.getElementById("songInput").value.toLowerCase();
-document.getElementById("status").innerText="Watching for: "+watchSong;
-
+// Fake function: In practice, replace this with a fetch from The Rock "What's Playing" JSON or webpage
+function fetchCurrentSong(){
+  // Example: simulate updating song
+  // In practice, you could fetch via API or parse webpage text
+  return document.getElementById("currentSongInput") ? document.getElementById("currentSongInput").value.toLowerCase() : "";
 }
 
 function checkSong(){
-
-let current=document.getElementById("currentSong").value.toLowerCase();
-
-if(watchSong!=="" && current.includes(watchSong)){
-
-document.getElementById("alert").innerHTML="🚨 SONG DETECTED — CALL NOW!";
-playAlert();
-
+  if(!watching) return;
+  currentSong = fetchCurrentSong();
+  if(currentSong.includes(watchArtist) && currentSong.includes(watchSong)){
+    triggerAlert();
+  }
 }
 
+function triggerAlert(){
+  document.getElementById("alert").innerText = "🚨 SONG DETECTED — CALL NOW! 🚨";
+  // Fullscreen alert
+  document.getElementById("fullscreenAlert").style.display="flex";
+  // Play alarm sound
+  let audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+  audio.play();
+  // Vibrate phone if supported
+  if(navigator.vibrate){ navigator.vibrate([500,200,500]); }
+  // Stop checking after triggered
+  watching = false;
 }
 
-function playAlert(){
-
-let audio=new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
-audio.play();
-
-}
-
-setInterval(checkSong,2000);
-
+// Check every 2 seconds
+setInterval(checkSong, 2000);
 </script>
 
+<!-- Temporary input to simulate live "What's Playing" -->
 <br><br>
-
-<p>Paste the current "What's Playing" text here:</p>
-
-<input id="currentSong" placeholder="Artist - Song">
+<p>Simulate "What's Playing" text (for testing only):</p>
+<input id="currentSongInput" placeholder="Artist - Song">
 
 </body>
 </html>
