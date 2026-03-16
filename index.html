@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radio Song Watcher</title>
+<style>
+body{
+  font-family: Arial;
+  background: #111;
+  color: #fff;
+  text-align: center;
+  padding: 40px;
+}
+h1{ color: #ff3c3c; }
+input{ padding: 12px; font-size: 18px; width: 250px; margin:5px;}
+button{ padding: 12px 20px; font-size: 18px; background: #ff3c3c; border:none; color:white; cursor:pointer; margin-top:10px; }
+#status{ margin-top:20px; font-size:18px; }
+#alert{ color:#00ff7f; font-size:28px; margin-top:30px; font-weight:bold; }
+#fullscreenAlert{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#ff0000;
+  color:white;
+  font-size:48px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+#fullscreenAlert a{
+  color:white;
+  text-decoration:none;
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+</style>
+</head>
+<body>
+
+<h1>🎧 Radio Song Watcher</h1>
+
+<p>Enter partial or full artist and song to watch for:</p>
+<input id="artistInput" placeholder="Artist (partial OK)">
+<br>
+<input id="songInput" placeholder="Song (partial OK)">
+<br>
+<button onclick="startWatching()">Start Watching</button>
+
+<div id="status">Waiting...</div>
+<div id="alert"></div>
+
+<div id="fullscreenAlert">
+  <a id="callLink" href="tel:0800762574">
+    🚨 SONG DETECTED — CALL NOW! 🚨
+  </a>
+</div>
+
+<script>
+let watchArtist = "";
+let watchSong = "";
+let watching = false;
+
+// Start watching the song
+function startWatching(){
+  watchArtist = document.getElementById("artistInput").value.toLowerCase().trim();
+  watchSong = document.getElementById("songInput").value.toLowerCase().trim();
+  if(watchArtist || watchSong){
+    watching = true;
+    document.getElementById("status").innerText = `Watching for: "${watchArtist}" OR "${watchSong}"`;
+    document.getElementById("alert").innerText = "";
+  } else {
+    alert("Please enter at least an artist or a song.");
+  }
+}
+
+// Fetch current song text (replace with live text from The Rock in real use)
+function fetchCurrentSong(){
+  return document.getElementById("currentSongInput") ? document.getElementById("currentSongInput").value.toLowerCase() : "";
+}
+
+// Check if watched song or artist is playing
+function checkSong(){
+  if(!watching) return;           // Only check after Start Watching clicked
+  let currentSong = fetchCurrentSong();
+  if(!currentSong) return;        // Ignore empty input
+
+  let artistMatch = watchArtist && currentSong.includes(watchArtist);
+  let songMatch = watchSong && currentSong.includes(watchSong);
+
+  if(artistMatch || songMatch){
+    triggerAlert();
+  }
+}
+
+// Trigger alert
+function triggerAlert(){
+  document.getElementById("alert").innerText = "🚨 SONG DETECTED — CALL NOW! 🚨";
+  document.getElementById("fullscreenAlert").style.display="flex";
+
+  // Play alarm sound
+  let audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+  audio.play();
+
+  // Vibrate phone if supported
+  if(navigator.vibrate){ navigator.vibrate([500,200,500]); }
+
+  // Stop checking after triggered
+  watching = false;
+}
+
+// Check every 2 seconds
+setInterval(checkSong, 2000);
+</script>
+
+<!-- Temporary input to simulate live "What's Playing" -->
+<br><br>
+<p>Simulate "What's Playing" text (for testing only):</p>
+<input id="currentSongInput" placeholder="Artist - Song">
+
+</body>
+</html>
