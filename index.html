@@ -47,10 +47,10 @@ button{ padding: 12px 20px; font-size: 18px; background: #ff3c3c; border:none; c
 
 <h1>🎧 Radio Song Watcher</h1>
 
-<p>Enter the artist and song to watch for:</p>
-<input id="artistInput" placeholder="Artist">
+<p>Enter partial or full artist and song to watch for:</p>
+<input id="artistInput" placeholder="Artist (partial OK)">
 <br>
-<input id="songInput" placeholder="Song">
+<input id="songInput" placeholder="Song (partial OK)">
 <br>
 <button onclick="startWatching()">Start Watching</button>
 
@@ -72,30 +72,35 @@ let watching = false;
 function startWatching(){
   watchArtist = document.getElementById("artistInput").value.toLowerCase().trim();
   watchSong = document.getElementById("songInput").value.toLowerCase().trim();
-  if(watchArtist && watchSong){
+  if(watchArtist || watchSong){
     watching = true;
-    document.getElementById("status").innerText = `Watching for: ${watchArtist} - ${watchSong}`;
+    document.getElementById("status").innerText = `Watching for: "${watchArtist}" OR "${watchSong}"`;
   } else {
-    alert("Please enter both artist and song.");
+    alert("Please enter at least an artist or a song.");
   }
 }
 
-// Fetch current song text (replace this with actual live text from The Rock if possible)
+// Fetch current song text (replace this with live fetch from The Rock if possible)
 function fetchCurrentSong(){
   // For testing/demo, use the "currentSongInput" field
   return document.getElementById("currentSongInput") ? document.getElementById("currentSongInput").value.toLowerCase() : "";
 }
 
-// Check if the watched song is playing
+// Check if the watched song or artist is playing
 function checkSong(){
   if(!watching) return;
   let currentSong = fetchCurrentSong();
-  if(currentSong.includes(watchArtist) && currentSong.includes(watchSong)){
+
+  // Match if artist OR song partial text is found
+  let artistMatch = watchArtist && currentSong.includes(watchArtist);
+  let songMatch = watchSong && currentSong.includes(watchSong);
+
+  if(artistMatch || songMatch){
     triggerAlert();
   }
 }
 
-// Trigger sound, vibration, and full-screen clickable alert
+// Trigger alert
 function triggerAlert(){
   document.getElementById("alert").innerText = "🚨 SONG DETECTED — CALL NOW! 🚨";
   document.getElementById("fullscreenAlert").style.display="flex";
