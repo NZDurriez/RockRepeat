@@ -17,7 +17,30 @@ input{ padding: 12px; font-size: 18px; width: 250px; margin:5px;}
 button{ padding: 12px 20px; font-size: 18px; background: #ff3c3c; border:none; color:white; cursor:pointer; margin-top:10px; }
 #status{ margin-top:20px; font-size:18px; }
 #alert{ color:#00ff7f; font-size:28px; margin-top:30px; font-weight:bold; }
-#fullscreenAlert{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#ff0000; color:white; font-size:48px; display:flex; justify-content:center; align-items:center; z-index:999; }
+#fullscreenAlert{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#ff0000;
+  color:white;
+  font-size:48px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+#fullscreenAlert a{
+  color:white;
+  text-decoration:none;
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
 </style>
 </head>
 <body>
@@ -34,16 +57,18 @@ button{ padding: 12px 20px; font-size: 18px; background: #ff3c3c; border:none; c
 <div id="status">Waiting...</div>
 <div id="alert"></div>
 
-<div id="fullscreenAlert">🚨 SONG DETECTED — CALL NOW! 🚨</div>
+<div id="fullscreenAlert">
+  <a id="callLink" href="tel:0800762574">
+    🚨 SONG DETECTED — CALL NOW! 🚨
+  </a>
+</div>
 
 <script>
 let watchArtist = "";
 let watchSong = "";
 let watching = false;
 
-// Example: replace this with live fetch from The Rock if possible
-let currentSong = ""; // this will store live "What's Playing" text
-
+// Start watching the song
 function startWatching(){
   watchArtist = document.getElementById("artistInput").value.toLowerCase().trim();
   watchSong = document.getElementById("songInput").value.toLowerCase().trim();
@@ -55,30 +80,33 @@ function startWatching(){
   }
 }
 
-// Fake function: In practice, replace this with a fetch from The Rock "What's Playing" JSON or webpage
+// Fetch current song text (replace this with actual live text from The Rock if possible)
 function fetchCurrentSong(){
-  // Example: simulate updating song
-  // In practice, you could fetch via API or parse webpage text
+  // For testing/demo, use the "currentSongInput" field
   return document.getElementById("currentSongInput") ? document.getElementById("currentSongInput").value.toLowerCase() : "";
 }
 
+// Check if the watched song is playing
 function checkSong(){
   if(!watching) return;
-  currentSong = fetchCurrentSong();
+  let currentSong = fetchCurrentSong();
   if(currentSong.includes(watchArtist) && currentSong.includes(watchSong)){
     triggerAlert();
   }
 }
 
+// Trigger sound, vibration, and full-screen clickable alert
 function triggerAlert(){
   document.getElementById("alert").innerText = "🚨 SONG DETECTED — CALL NOW! 🚨";
-  // Fullscreen alert
   document.getElementById("fullscreenAlert").style.display="flex";
+
   // Play alarm sound
   let audio = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
   audio.play();
+
   // Vibrate phone if supported
   if(navigator.vibrate){ navigator.vibrate([500,200,500]); }
+
   // Stop checking after triggered
   watching = false;
 }
