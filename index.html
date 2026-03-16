@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Radio Song Watcher</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#111;
+color:white;
+text-align:center;
+padding:40px;
+}
+
+h1{
+color:#ff3c3c;
+}
+
+input{
+padding:12px;
+font-size:18px;
+width:250px;
+}
+
+button{
+padding:12px 20px;
+font-size:18px;
+background:#ff3c3c;
+border:none;
+color:white;
+cursor:pointer;
+margin-top:10px;
+}
+
+#status{
+margin-top:30px;
+font-size:20px;
+}
+
+.alert{
+color:#00ff7f;
+font-size:28px;
+margin-top:30px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🎧 Radio Song Watcher</h1>
+
+<p>Enter the song you want to watch for:</p>
+
+<input id="songInput" placeholder="e.g. Spiders">
+
+<br>
+
+<button onclick="setSong()">Start Watching</button>
+
+<div id="status">Waiting...</div>
+
+<div id="alert"></div>
+
+<script>
+
+let watchSong="";
+
+function setSong(){
+
+watchSong=document.getElementById("songInput").value.toLowerCase();
+document.getElementById("status").innerText="Watching for: "+watchSong;
+
+}
+
+function checkSong(){
+
+let current=document.getElementById("currentSong").value.toLowerCase();
+
+if(watchSong!=="" && current.includes(watchSong)){
+
+document.getElementById("alert").innerHTML="🚨 SONG DETECTED — CALL NOW!";
+playAlert();
+
+}
+
+}
+
+function playAlert(){
+
+let audio=new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+audio.play();
+
+}
+
+setInterval(checkSong,2000);
+
+</script>
+
+<br><br>
+
+<p>Paste the current "What's Playing" text here:</p>
+
+<input id="currentSong" placeholder="Artist - Song">
+
+</body>
+</html>
